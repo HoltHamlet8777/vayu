@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYU — онлайн-студия йоги</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --linen:#F6F2EA;
+    --ink:#1E2B24;
+    --sage:#6F8F7B;
+    --sage-deep:#4F6B5C;
+    --coral:#D97A5C;
+    --sand:#E4DAC4;
+    --dusk:#2E3B52;
+    --white:#FFFDF9;
+    --radius:18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--linen);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block; max-width:100%;}
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none;}
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; line-height:1.08; letter-spacing:-0.01em;}
+  :focus-visible{outline:2.5px solid var(--coral); outline-offset:3px; border-radius:4px;}
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--sage-deep);
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  /* ---------- NAV ---------- */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:22px 0;
+    transition:background .35s ease, padding .35s ease, box-shadow .35s ease;
+  }
+  .nav.is-scrolled{
+    background:rgba(246,242,234,0.92);
+    backdrop-filter:blur(8px);
+    padding:14px 0;
+    box-shadow:0 1px 0 rgba(30,43,36,0.08);
+  }
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between;}
+  .logo{font-family:'Fraunces', serif; font-weight:600; font-size:22px; letter-spacing:0.02em;}
+  .logo span{color:var(--coral);}
+  .nav-links{display:flex; gap:34px; font-size:15px; font-weight:500;}
+  .nav-links a{opacity:0.82; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{
+    font-size:14px; font-weight:600; padding:11px 22px;
+    background:var(--ink); color:var(--linen); border-radius:999px;
+    transition:background .2s;
+  }
+  .nav-cta:hover{background:var(--sage-deep);}
+  .lang-toggle{
+    margin-left:14px;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    font-weight:700;
+    padding:8px 13px;
+    border-radius:999px;
+    border:1px solid rgba(30,43,36,0.22);
+    color:var(--ink);
+    background:transparent;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .lang-toggle:hover{
+    background:var(--ink);
+    color:var(--linen);
+    border-color:var(--ink);
+  }
+  @media (max-width:760px){
+    .nav-links{display:none;}
+    .lang-toggle{margin-left:0;}
+  }
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:168px 0 110px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:48px;
+    align-items:center;
+  }
+  .hero-eyebrow{margin-bottom:22px;}
+  .hero h1{
+    font-size:clamp(38px,5.2vw,68px);
+    max-width:640px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--coral);
+    font-weight:500;
+  }
+  .hero p{
+    margin-top:24px;
+    font-size:18px;
+    max-width:460px;
+    color:rgba(30,43,36,0.78);
+  }
+  .hero-actions{display:flex; align-items:center; gap:22px; margin-top:36px;}
+  .btn-primary{
+    background:var(--ink); color:var(--linen);
+    padding:16px 30px; border-radius:999px;
+    font-weight:600; font-size:15px;
+    transition:transform .2s ease, background .2s ease;
+    display:inline-block;
+  }
+  .btn-primary:hover{background:var(--coral); transform:translateY(-2px);}
+  .hero-note{font-size:14px; color:rgba(30,43,36,0.6);}
+  /* breathing orb */
+  .orb-stage{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    height:380px; position:relative;
+  }
+  .orb{
+    width:240px; height:240px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #E89476 0%, var(--coral) 38%, var(--sage) 100%);
+    animation:breathe 8s ease-in-out infinite;
+    box-shadow:0 30px 70px -20px rgba(217,122,92,0.45);
+  }
+  .orb-ring{
+    position:absolute; inset:0; margin:auto; width:330px; height:330px;
+    border:1px solid rgba(30,43,36,0.18); border-radius:50%;
+    top:50%; left:50%; transform:translate(-50%,-50%);
+  }
+  @keyframes breathe{
+    0%,100%{transform:scale(0.82);}
+    50%{transform:scale(1.05);}
+  }
+  .orb-label{
+    margin-top:26px;
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--sage-deep);
+  }
+  @media (prefers-reduced-motion:reduce){
+    .orb{animation:none;}
+  }
+  @media (max-width:880px){
+    .hero{padding:140px 0 70px;}
+    .hero .wrap{grid-template-columns:1fr; gap:50px;}
+    .orb-stage{height:280px;}
+    .orb{width:180px; height:180px;}
+    .orb-ring{width:250px; height:250px;}
+  }
+  /* ---------- SECTION HEADERS (shared look) ---------- */
+  .section-head{max-width:620px; margin-bottom:64px;}
+  .section-head h2{font-size:clamp(28px,3.6vw,42px); margin-top:14px;}
+  .section-head p{margin-top:16px; font-size:16px; color:rgba(30,43,36,0.72);}
+  /* ---------- PATH / COURSES ---------- */
+  .path-section{padding:40px 0 130px; position:relative;}
+  .path-track{position:relative;}
+  .path-line{
+    position:absolute; top:60px; left:0; width:100%; height:560px;
+    z-index:0; opacity:0.55;
+  }
+  .path-cards{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:repeat(5,1fr); gap:22px;
+  }
+  .course-card{
+    background:var(--white);
+    border:1px solid rgba(30,43,36,0.08);
+    border-radius:var(--radius);
+    padding:28px 22px 30px;
+    display:flex; flex-direction:column;
+    min-height:430px;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .course-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 22px 40px -18px rgba(30,43,36,0.22);
+  }
+  .course-card:nth-child(odd){transform:translateY(0);}
+  .course-card:nth-child(even){transform:translateY(46px);}
+  .course-card:nth-child(even):hover{transform:translateY(38px);}
+  .course-card.is-final{
+    background:var(--dusk); color:var(--white); border-color:var(--dusk);
+  }
+  .course-card.is-final .eyebrow,
+  .course-card.is-final .card-meta{color:#B9C3D6;}
+  .course-card.is-final .course-includes li{color:#D8DEEA;}
+  .course-card.is-final .card-icon{background:rgba(255,253,249,0.1);}
+  .card-step{
+    font-family:'Space Mono', monospace; font-size:13px; letter-spacing:0.12em;
+    color:var(--coral); margin-bottom:10px;
+  }
+  .card-icon{
+    width:52px; height:52px; border-radius:50%;
+    background:var(--sand); display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+  }
+  .card-icon svg{width:26px; height:26px; stroke:var(--ink); fill:none; stroke-width:1.6;}
+  .course-card.is-final .card-icon svg{stroke:var(--white);}
+  .course-card h3{font-size:23px; margin-bottom:6px;}
+  .card-tagline{font-size:14px; font-style:italic; color:rgba(30,43,36,0.55); margin-bottom:16px;}
+  .course-card.is-final .card-tagline{color:#B9C3D6;}
+  .card-meta{
+    font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.05em;
+    color:rgba(30,43,36,0.55); margin-bottom:18px;
+  }
+  .card-desc{font-size:14.5px; color:rgba(30,43,36,0.78); margin-bottom:18px; flex-grow:1;}
+  .course-card.is-final .card-desc{color:#E3E7EF;}
+  .course-includes{margin-bottom:22px;}
+  .course-includes li{
+    font-size:13px; color:rgba(30,43,36,0.68);
+    padding-left:16px; position:relative; margin-bottom:7px;
+  }
+  .course-includes li::before{
+    content:"—"; position:absolute; left:0; color:var(--coral);
+  }
+  .card-bottom{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:auto; padding-top:18px; border-top:1px solid rgba(30,43,36,0.1);
+  }
+  .course-card.is-final .card-bottom{border-top-color:rgba(255,255,255,0.18);}
+  .card-price{font-family:'Fraunces', serif; font-size:20px; font-weight:600;}
+  .card-link{font-size:13px; font-weight:600; color:var(--coral);}
+  .course-card.is-final .card-link{color:#F2A98C;}
+  @media (max-width:1050px){
+    .path-cards{grid-template-columns:repeat(2,1fr);}
+    .course-card:nth-child(even){transform:translateY(0);}
+    .path-line{display:none;}
+  }
+  @media (max-width:600px){
+    .path-cards{grid-template-columns:1fr;}
+    .course-card{min-height:auto;}
+  }
+  /* ---------- STATS BAND ---------- */
+  .stats{
+    background:var(--dusk); color:var(--white);
+    padding:64px 0;
+  }
+  .stats .wrap{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:30px;
+  }
+  .stat-num{font-family:'Fraunces', serif; font-size:clamp(30px,4vw,44px); font-weight:600;}
+  .stat-label{font-size:13px; color:#B9C3D6; margin-top:8px; max-width:200px;}
+  @media (max-width:760px){
+    .stats .wrap{grid-template-columns:repeat(2,1fr);}
+  }
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials{padding:120px 0; background:var(--sand);}
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .testi-card{
+    background:var(--white); border-radius:var(--radius);
+    padding:30px 26px; display:flex; flex-direction:column; height:100%;
+  }
+  .testi-quote{font-size:16px; font-style:italic; color:var(--ink); flex-grow:1; margin-bottom:18px;}
+  .testi-author{font-family:'Space Mono', monospace; font-size:12.5px; letter-spacing:0.04em; color:var(--sage-deep);}
+  @media (max-width:860px){
+    .testi-grid{grid-template-columns:1fr; gap:18px;}
+  }
+  /* ---------- FAQ ---------- */
+  .faq{padding:120px 0;}
+  .faq-list{max-width:760px;}
+  .faq-item{border-bottom:1px solid rgba(30,43,36,0.14);}
+  .faq-q{
+    width:100%; text-align:left; padding:24px 0;
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:17px; font-weight:600; font-family:'Fraunces', serif;
+  }
+  .faq-q .plus{font-family:'Space Mono', monospace; font-size:20px; color:var(--coral); transition:transform .25s;}
+  .faq-item.is-open .plus{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    font-size:15px; color:rgba(30,43,36,0.74); padding-right:60px;
+  }
+  .faq-a-inner{padding-bottom:22px;}
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    background:var(--ink); color:var(--linen);
+    padding:110px 0; text-align:center;
+  }
+  .final-cta h2{font-size:clamp(30px,4.4vw,50px); color:var(--white); max-width:640px; margin:0 auto;}
+  .final-cta p{margin-top:18px; color:rgba(246,242,234,0.7); max-width:480px; margin-left:auto; margin-right:auto;}
+  .cta-form{
+    margin-top:34px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;
+  }
+  .cta-form input{
+    background:rgba(246,242,234,0.08); border:1px solid rgba(246,242,234,0.3);
+    border-radius:999px; padding:14px 22px; color:var(--white); font-size:15px;
+    min-width:280px;
+  }
+  .cta-form input::placeholder{color:rgba(246,242,234,0.5);}
+  .cta-form button{
+    background:var(--coral); color:var(--white); padding:14px 28px;
+    border-radius:999px; font-weight:600; font-size:15px; transition:background .2s;
+  }
+  .cta-form button:hover{background:#c4674a;}
+  .cta-confirm{margin-top:16px; font-size:14px; color:var(--sage); min-height:20px;}
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:rgba(246,242,234,0.7); padding:60px 0 30px;}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:40px;}
+  .footer-brand .logo{color:var(--white); margin-bottom:14px;}
+  .footer-brand p{font-size:14px; max-width:260px; color:rgba(246,242,234,0.55);}
+  .footer-col h4{font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(246,242,234,0.5); margin-bottom:16px;}
+  .footer-col li{margin-bottom:10px; font-size:14.5px;}
+  .footer-col a:hover{color:var(--white);}
+  .footer-bottom{
+    border-top:1px solid rgba(246,242,234,0.14); padding-top:24px;
+    display:flex; justify-content:space-between; font-size:13px; color:rgba(246,242,234,0.45);
+    flex-wrap:wrap; gap:10px;
+  }
+  @media (max-width:760px){
+    .footer-grid{grid-template-columns:1fr 1fr; gap:30px;}
+  }
+
+  /* ---------- LEGAL BUTTONS IN FOOTER ---------- */
+  .footer-legal-links{
+    border-top:1px solid rgba(246,242,234,0.14);
+    padding:22px 0 0;
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+    margin-top:0;
+  }
+  .legal-btn{
+    font-size:12.5px; font-family:'Space Mono', monospace;
+    color:rgba(246,242,234,0.5);
+    border:1px solid rgba(246,242,234,0.18);
+    background:transparent;
+    border-radius:999px;
+    padding:7px 16px;
+    cursor:pointer;
+    transition:color .2s, border-color .2s, background .2s;
+    letter-spacing:0.04em;
+  }
+  .legal-btn:hover{
+    color:var(--linen);
+    border-color:rgba(246,242,234,0.5);
+    background:rgba(246,242,234,0.06);
+  }
+
+  /* ---------- LEGAL MODAL ---------- */
+  .legal-modal{
+    position:fixed; inset:0; z-index:200;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(4px);
+    opacity:0; visibility:hidden;
+    transition:.3s ease;
+  }
+  .legal-modal.active{opacity:1; visibility:visible;}
+  .legal-modal-box{
+    background:var(--white);
+    border-radius:var(--radius);
+    max-width:680px; width:calc(100% - 40px);
+    max-height:82vh;
+    display:flex; flex-direction:column;
+    box-shadow:0 32px 80px -20px rgba(30,43,36,0.35);
+    overflow:hidden;
+  }
+  .legal-modal-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:26px 30px 18px;
+    border-bottom:1px solid rgba(30,43,36,0.1);
+    flex-shrink:0;
+  }
+  .legal-modal-header h3{
+    font-size:19px; font-family:'Fraunces', serif; font-weight:600;
+    color:var(--ink); line-height:1.2;
+  }
+  .legal-modal-close{
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(30,43,36,0.07);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:var(--ink); cursor:pointer;
+    border:none; flex-shrink:0; margin-left:16px;
+    transition:background .2s;
+  }
+  .legal-modal-close:hover{background:rgba(30,43,36,0.14);}
+  .legal-modal-body{
+    padding:26px 30px 30px;
+    overflow-y:auto;
+    font-size:14.5px;
+    color:rgba(30,43,36,0.82);
+    line-height:1.75;
+  }
+  .legal-modal-body h4{
+    font-family:'Fraunces', serif; font-weight:600; font-size:16px;
+    color:var(--ink); margin:22px 0 8px;
+  }
+  .legal-modal-body h4:first-child{margin-top:0;}
+  .legal-modal-body p{margin-bottom:10px;}
+  .legal-modal-body ul{padding-left:18px; margin-bottom:10px;}
+  .legal-modal-body ul li{margin-bottom:5px; list-style:disc;}
+  .legal-modal-body .legal-effective{
+    font-family:'Space Mono', monospace; font-size:12px;
+    color:var(--sage-deep); letter-spacing:0.06em;
+    margin-bottom:22px; display:block;
+  }
+  @media (max-width:600px){
+    .legal-modal-box{max-height:90vh;}
+    .legal-modal-header{padding:20px 20px 14px;}
+    .legal-modal-body{padding:18px 20px 24px;}
+    .footer-legal-links{justify-content:flex-start;}
+  }
+</style>
+
+<style>
+.modal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  visibility:hidden;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(0px);
+  transition:.3s ease;
+  z-index:9999;
+}
+.modal.active{
+  opacity:1;
+  visibility:visible;
+  backdrop-filter:blur(10px);
+}
+.modal-content{
+  width:360px;
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:28px;
+  transform:translateY(20px) scale(.96);
+  transition:.3s ease;
+  font-family:'Inter', sans-serif;
+  color:var(--ink);
+}
+.modal.active .modal-content{
+  transform:translateY(0) scale(1);
+}
+.modal-content h3{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  font-size:22px;
+  margin-bottom:14px;
+  color:var(--ink);
+}
+.modal-content #courseName{
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--sage-deep);
+  margin-bottom:16px;
+}
+.modal input{
+  width:100%;
+  padding:12px 16px;
+  margin:8px 0;
+  border-radius:12px;
+  border:1px solid rgba(30,43,36,0.16);
+  font-family:'Inter', sans-serif;
+  font-size:15px;
+  color:var(--ink);
+  background:var(--linen);
+}
+.modal input::placeholder{
+  color:rgba(30,43,36,0.45);
+}
+.modal input:focus-visible{
+  outline:2px solid var(--coral);
+  outline-offset:2px;
+}
+.modal button{
+  width:100%;
+  padding:13px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  margin-top:8px;
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  font-size:15px;
+  transition:background .2s ease;
+}
+#confirmBuy{
+  background:var(--ink);
+  color:var(--linen);
+}
+#confirmBuy:hover{
+  background:var(--sage-deep);
+}
+.modal-content > button[onclick="closeModal()"]{
+  background:none;
+  color:rgba(30,43,36,0.6);
+}
+.modal-content > button[onclick="closeModal()"]:hover{
+  color:var(--ink);
+}
+</style>
+
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="wrap">
+      <a href="#top" class="logo">VA<span>Y</span>U</a>
+      <div class="nav-links">
+        <a href="#path" data-i18n="nav.courses">Курсы</a>
+        <a href="#testimonials" data-i18n="nav.testimonials">Отзывы</a>
+        <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+        <a href="#contacts" data-i18n="nav.contacts">Контакты</a>
+      </div>
+      <a href="#path" class="nav-cta" data-i18n="nav.cta">Выбрать курс</a>
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Switch language">EN</button>
+    </div>
+  </nav>
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow">Онлайн-студия осознанного движения</div>
+        <h1 data-i18n="hero.title">Путь длиной <em>в один вдох</em>, который растягивается на пять курсов</h1>
+        <p data-i18n="hero.desc">От первой асаны на коврике до собственной группы учеников — пять программ, выстроенных как одна дыхательная практика: вдох, движение, удержание, выдох.</p>
+        <div class="hero-actions">
+          <a href="#path" class="btn-primary" data-i18n="hero.cta">Посмотреть путь практики</a>
+          <span class="hero-note" data-i18n="hero.note">5 направлений · от 400 €</span>
+        </div>
+      </div>
+      <div class="orb-stage">
+        <div class="orb-ring"></div>
+        <div class="orb"></div>
+        <div class="orb-label" id="breathLabel" data-i18n="hero.inhale">Вдох</div>
+      </div>
+    </div>
+  </header>
+  <section class="path-section" id="path">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="path.eyebrow">Путь практики · 01–05</div>
+        <h2 data-i18n="path.title">Пять остановок между новичком и учителем</h2>
+        <p data-i18n="path.desc">Курсы выстроены в естественном порядке практики: каждый следующий продолжает предыдущий, но вы можете войти в путь с любого уровня.</p>
+      </div>
+      <div class="path-track">
+        <svg class="path-line" viewBox="0 0 1180 560" preserveAspectRatio="none">
+          <path d="M20,90 C 220,40 280,260 460,220 C 640,180 700,400 880,360 C 1000,340 1080,420 1160,400"
+                fill="none" stroke="#6F8F7B" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>
+        </svg>
+        <div class="path-cards">
+          <article class="course-card">
+            <div class="card-step">01 / 05</div>
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3 L20 19 H4 Z"/><circle cx="12" cy="9" r="2"/></svg>
+            </div>
+            <div class="eyebrow" data-i18n="course1.level">Начальный</div>
+            <h3 data-i18n="course1.title">Корни</h3>
+            <div class="card-tagline" data-i18n="course1.tagline">Первый вдох на коврике</div>
+            <div class="card-meta" data-i18n="course1.meta">4 недели · 12 занятий</div>
+            <p class="card-desc" data-i18n="course1.desc">Основы дыхания и выравнивания тела. Простые асаны без риска травм — для тех, кто никогда не занимался или возвращается после долгой паузы.</p>
+            <ul class="course-includes">
+              <li data-i18n="course1.inc1">Не нужен инвентарь</li>
+              <li data-i18n="course1.inc2">Видео + текстовые подсказки</li>
+              <li data-i18n="course1.inc3">Чат с куратором</li>
+            </ul>
+            <div class="card-bottom">
+              <div class="card-price">400 €</div>
+              <a href="#contacts" class="card-link" data-i18n="card.buy">Купить →</a>
+            </div>
+          </article>
+          <article class="course-card">
+            <div class="card-step">02 / 05</div>
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 12 C 7 6, 9 18, 13 12 S 19 6, 21 12"/></svg>
+            </div>
+            <div class="eyebrow" data-i18n="course2.level">Базовый</div>
+            <h3 data-i18n="course2.title">Поток</h3>
+            <div class="card-tagline" data-i18n="course2.tagline">Дыхание ведёт движение</div>
+            <div class="card-meta" data-i18n="course2.meta">6 недель · 18 занятий</div>
+            <p class="card-desc" data-i18n="course2.desc">Динамичные связки виньяса-флоу. Учимся синхронизировать вдох и выдох с движением, развиваем гибкость и координацию.</p>
+            <ul class="course-includes">
+              <li data-i18n="course2.inc1">Плейлисты для практики</li>
+              <li data-i18n="course2.inc2">Разбор связок по кадрам</li>
+              <li data-i18n="course2.inc3">Доступ к записям навсегда</li>
+            </ul>
+            <div class="card-bottom">
+              <div class="card-price">800 €</div>
+              <a href="#contacts" class="card-link" data-i18n="card.buy">Купить →</a>
+            </div>
+          </article>
+          <article class="course-card">
+            <div class="card-step">03 / 05</div>
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 18 L9 8 L13 14 L17 6 L20 18"/></svg>
+            </div>
+            <div class="eyebrow" data-i18n="course3.level">Средний</div>
+            <h3 data-i18n="course3.title">Сила</h3>
+            <div class="card-tagline" data-i18n="course3.tagline">Устойчивость через усилие</div>
+            <div class="card-meta" data-i18n="course3.meta">6 недель · 18 занятий</div>
+            <p class="card-desc" data-i18n="course3.desc">Силовая йога и удержание балансов. Работа с выносливостью корпуса и осознанным напряжением мышц.</p>
+            <ul class="course-includes">
+              <li data-i18n="course3.inc1">Программа на коврик + блоки</li>
+              <li data-i18n="course3.inc2">Трекер прогресса</li>
+              <li data-i18n="course3.inc3">Еженедельный разбор техники</li>
+            </ul>
+            <div class="card-bottom">
+              <div class="card-price">900 €</div>
+              <a href="#contacts" class="card-link" data-i18n="card.buy">Купить →</a>
+            </div>
+          </article>
+          <article class="course-card">
+            <div class="card-step">04 / 05</div>
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><path d="M19 13 A7 7 0 1 1 11 5 A5.6 5.6 0 0 0 19 13 Z"/></svg>
+            </div>
+            <div class="eyebrow" data-i18n="course4.level">Восстановительный</div>
+            <h3 data-i18n="course4.title">Тишина</h3>
+            <div class="card-tagline" data-i18n="course4.tagline">Практика для нервной системы</div>
+            <div class="card-meta" data-i18n="course4.meta">4 недели · 12 занятий</div>
+            <p class="card-desc" data-i18n="course4.desc">Йога-нидра и инь-йога: долгие удержания и работа с дыханием для глубокого восстановления и крепкого сна.</p>
+            <ul class="course-includes">
+              <li data-i18n="course4.inc1">Аудиопрактики для сна</li>
+              <li data-i18n="course4.inc2">Минимум инвентаря</li>
+              <li data-i18n="course4.inc3">Записи доступны 24/7</li>
+            </ul>
+            <div class="card-bottom">
+              <div class="card-price">1 200 €</div>
+              <a href="#contacts" class="card-link" data-i18n="card.buy">Купить →</a>
+            </div>
+          </article>
+          <article class="course-card is-final">
+            <div class="card-step">05 / 05</div>
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2 V5 M12 19 V22 M2 12 H5 M19 12 H22 M5 5 L7 7 M17 17 L19 19 M5 19 L7 17 M17 7 L19 5"/></svg>
+            </div>
+            <div class="eyebrow" data-i18n="course5.level">Продвинутый + сертификация</div>
+            <h3 data-i18n="course5.title">Учитель</h3>
+            <div class="card-tagline" data-i18n="course5.tagline">От практики к преподаванию</div>
+            <div class="card-meta" data-i18n="course5.meta">12 недель · интенсив</div>
+            <p class="card-desc" data-i18n="course5.desc">Анатомия, методика построения занятий, практика ведения групп. Выпускной экзамен и международный сертификат преподавателя.</p>
+            <ul class="course-includes">
+              <li data-i18n="course5.inc1">Сертификат 200 RYT</li>
+              <li data-i18n="course5.inc2">Стажировка с менторами</li>
+              <li data-i18n="course5.inc3">Закрытое сообщество преподавателей</li>
+            </ul>
+            <div class="card-bottom">
+              <div class="card-price">1 500 €</div>
+              <a href="#contacts" class="card-link" data-i18n="card.buy">Купить →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="stats">
+    <div class="wrap">
+      <div>
+        <div class="stat-num">1 240+</div>
+        <div class="stat-label" data-i18n="stats.s1">выпускников прошли хотя бы один курс</div>
+      </div>
+      <div>
+        <div class="stat-num">5</div>
+        <div class="stat-label" data-i18n="stats.s2">направлений — от первого вдоха до сертификата</div>
+      </div>
+      <div>
+        <div class="stat-num">87%</div>
+        <div class="stat-label" data-i18n="stats.s3">продолжают практиковать через год</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label" data-i18n="stats.s4">преподавателей-методистов в команде</div>
+      </div>
+    </div>
+  </section>
+  <section class="testimonials" id="testimonials">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="testi.eyebrow">Голоса с коврика</div>
+        <h2 data-i18n="testi.title">Что говорят те, кто уже прошёл путь</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <p class="testi-quote" data-i18n="testi.q1">Думала, что йога — это просто растяжка. Курс «Тишина» научил меня засыпать без таблеток.</p>
+          <div class="testi-author" data-i18n="testi.a1">МАРИНА, 34 — КУРС «ТИШИНА»</div>
+        </div>
+        <div class="testi-card">
+          <p class="testi-quote" data-i18n="testi.q2">После «Силы» наконец встала в стойку на руках, о которой мечтала три года.</p>
+          <div class="testi-author" data-i18n="testi.a2">АЛИНА, 27 — КУРС «СИЛА»</div>
+        </div>
+        <div class="testi-card">
+          <p class="testi-quote" data-i18n="testi.q3">Прошла весь путь до «Учителя» и теперь веду свою группу по выходным.</p>
+          <div class="testi-author" data-i18n="testi.a3">СВЕТЛАНА, 41 — КУРС «УЧИТЕЛЬ»</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="faq.eyebrow">Вопросы</div>
+        <h2 data-i18n="faq.title">Перед тем как выбрать курс</h2>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item is-open">
+          <button class="faq-q">
+            <span data-i18n="faq.q1">Нужен ли опыт, чтобы начать?</span>
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a" style="max-height:200px">
+            <div class="faq-a-inner" data-i18n="faq.a1">Нет. «Корни» рассчитаны на полных новичков — суставы, дыхание и базовые позы объясняются с нуля. Дальше курсы усложняются по уровню.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span data-i18n="faq.q2">Можно ли проходить несколько курсов подряд?</span>
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner" data-i18n="faq.a2">Да, большинство выбирают путь «Корни → Поток → Сила или Тишина» и доходят до «Учителя» через 6–9 месяцев практики.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span data-i18n="faq.q3">Какой инвентарь понадобится?</span>
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner" data-i18n="faq.a3">Коврик и желание дышать. Для «Силы» и «Тишины» пригодятся блоки и плед — список присылаем перед стартом курса.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span data-i18n="faq.q4">Что если формат не подойдёт?</span>
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner" data-i18n="faq.a4">В течение 7 дней с начала курса можно вернуть деньги — без объяснений и лишних вопросов.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            <span data-i18n="faq.q5">Доступ к занятиям ограничен по времени?</span>
+            <span class="plus">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner" data-i18n="faq.a5">Видео остаются в личном кабинете навсегда — можно возвращаться к практике в любой момент.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="final-cta" id="contacts">
+    <div class="wrap">
+      <h2 data-i18n="cta.title">Готовы сделать первый вдох?</h2>
+      <p data-i18n="cta.desc">Оставьте почту — пришлём подробную программу всех пяти курсов и подскажем, с какого начать именно вам.</p>
+      <form class="cta-form" id="ctaForm">
+        <input type="email" id="ctaEmail" placeholder="Ваш email" data-i18n-placeholder="cta.placeholder" required>
+        <button type="submit" data-i18n="cta.submit">Прислать программу</button>
+      </form>
+      <div class="cta-confirm" id="ctaConfirm"></div>
+    </div>
+  </section>
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">VA<span style="color:var(--coral)">Y</span>U</div>
+          <p data-i18n="footer.brand">Онлайн-студия осознанного движения. Пять курсов, один путь — от первой асаны до собственной группы учеников.</p>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.coursesTitle">Курсы</h4>
+          <ul>
+            <li><a href="#path" data-i18n="course1.title">Корни</a></li>
+            <li><a href="#path" data-i18n="course2.title">Поток</a></li>
+            <li><a href="#path" data-i18n="course3.title">Сила</a></li>
+            <li><a href="#path" data-i18n="course4.title">Тишина</a></li>
+            <li><a href="#path" data-i18n="course5.title">Учитель</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.studioTitle">Студия</h4>
+          <ul>
+            <li><a href="#testimonials" data-i18n="nav.testimonials">Отзывы</a></li>
+            <li><a href="#faq" data-i18n="nav.faq">Вопросы</a></li>
+            <li><a href="#contacts" data-i18n="nav.contacts">Контакты</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.contactTitle">Связь</h4>
+          <ul>
+            <li><a href="mailto:reswer78@inbox.lv">reswer78@inbox.lv</a></li>
+            <li><a href="https://t.me/ttt9981" target="_blank">@ttt9981</a></li>
+            <li><a href="#"></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-i18n="footer.bottom">© 2026 VAYU. Онлайн-студия осознанного движения.</span>
+      </div>
+      <div class="footer-legal-links">
+        <button class="legal-btn" onclick="openLegalModal('terms')" data-i18n="legal.terms">Условия предоставления услуг</button>
+        <button class="legal-btn" onclick="openLegalModal('privacy')" data-i18n="legal.privacy">Политика конфиденциальности</button>
+        <button class="legal-btn" onclick="openLegalModal('refund')" data-i18n="legal.refund">Политика возврата средств</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- LEGAL MODAL -->
+  <div class="legal-modal" id="legalModal" onclick="closeLegalModal(event)">
+    <div class="legal-modal-box">
+      <div class="legal-modal-header">
+        <h3 id="legalModalTitle"></h3>
+        <button class="legal-modal-close" onclick="closeLegalModal()" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="legal-modal-body" id="legalModalBody"></div>
+    </div>
+  </div>
+<script>
+  /* ===================== i18n ===================== */
+  const i18n = {
+    ru: {
+      "nav.courses":"Курсы", "nav.testimonials":"Отзывы", "nav.faq":"Вопросы", "nav.contacts":"Контакты", "nav.cta":"Выбрать курс",
+      "hero.eyebrow":"Онлайн-студия осознанного движения",
+      "hero.title":"Путь длиной <em>в один вдох</em>, который растягивается на пять курсов",
+      "hero.desc":"От первой асаны на коврике до собственной группы учеников — пять программ, выстроенных как одна дыхательная практика: вдох, движение, удержание, выдох.",
+      "hero.cta":"Посмотреть путь практики",
+      "hero.note":"5 направлений · от 400 €",
+      "hero.inhale":"Вдох", "hero.exhale":"Выдох",
+      "path.eyebrow":"Путь практики · 01–05",
+      "path.title":"Пять остановок между новичком и учителем",
+      "path.desc":"Курсы выстроены в естественном порядке практики: каждый следующий продолжает предыдущий, но вы можете войти в путь с любого уровня.",
+      "card.buy":"Купить →",
+      "course1.level":"Начальный", "course1.title":"Корни", "course1.tagline":"Первый вдох на коврике", "course1.meta":"4 недели · 12 занятий",
+      "course1.desc":"Основы дыхания и выравнивания тела. Простые асаны без риска травм — для тех, кто никогда не занимался или возвращается после долгой паузы.",
+      "course1.inc1":"Не нужен инвентарь", "course1.inc2":"Видео + текстовые подсказки", "course1.inc3":"Чат с куратором",
+      "course2.level":"Базовый", "course2.title":"Поток", "course2.tagline":"Дыхание ведёт движение", "course2.meta":"6 недель · 18 занятий",
+      "course2.desc":"Динамичные связки виньяса-флоу. Учимся синхронизировать вдох и выдох с движением, развиваем гибкость и координацию.",
+      "course2.inc1":"Плейлисты для практики", "course2.inc2":"Разбор связок по кадрам", "course2.inc3":"Доступ к записям навсегда",
+      "course3.level":"Средний", "course3.title":"Сила", "course3.tagline":"Устойчивость через усилие", "course3.meta":"6 недель · 18 занятий",
+      "course3.desc":"Силовая йога и удержание балансов. Работа с выносливостью корпуса и осознанным напряжением мышц.",
+      "course3.inc1":"Программа на коврик + блоки", "course3.inc2":"Трекер прогресса", "course3.inc3":"Еженедельный разбор техники",
+      "course4.level":"Восстановительный", "course4.title":"Тишина", "course4.tagline":"Практика для нервной системы", "course4.meta":"4 недели · 12 занятий",
+      "course4.desc":"Йога-нидра и инь-йога: долгие удержания и работа с дыханием для глубокого восстановления и крепкого сна.",
+      "course4.inc1":"Аудиопрактики для сна", "course4.inc2":"Минимум инвентаря", "course4.inc3":"Записи доступны 24/7",
+      "course5.level":"Продвинутый + сертификация", "course5.title":"Учитель", "course5.tagline":"От практики к преподаванию", "course5.meta":"12 недель · интенсив",
+      "course5.desc":"Анатомия, методика построения занятий, практика ведения групп. Выпускной экзамен и международный сертификат преподавателя.",
+      "course5.inc1":"Сертификат 200 RYT", "course5.inc2":"Стажировка с менторами", "course5.inc3":"Закрытое сообщество преподавателей",
+      "stats.s1":"выпускников прошли хотя бы один курс",
+      "stats.s2":"направлений — от первого вдоха до сертификата",
+      "stats.s3":"продолжают практиковать через год",
+      "stats.s4":"преподавателей-методистов в команде",
+      "testi.eyebrow":"Голоса с коврика", "testi.title":"Что говорят те, кто уже прошёл путь",
+      "testi.q1":"Думала, что йога — это просто растяжка. Курс «Тишина» научил меня засыпать без таблеток.", "testi.a1":"МАРИНА, 34 — КУРС «ТИШИНА»",
+      "testi.q2":"После «Силы» наконец встала в стойку на руках, о которой мечтала три года.", "testi.a2":"АЛИНА, 27 — КУРС «СИЛА»",
+      "testi.q3":"Прошла весь путь до «Учителя» и теперь веду свою группу по выходным.", "testi.a3":"СВЕТЛАНА, 41 — КУРС «УЧИТЕЛЬ»",
+      "faq.eyebrow":"Вопросы", "faq.title":"Перед тем как выбрать курс",
+      "faq.q1":"Нужен ли опыт, чтобы начать?",
+      "faq.a1":"Нет. «Корни» рассчитаны на полных новичков — суставы, дыхание и базовые позы объясняются с нуля. Дальше курсы усложняются по уровню.",
+      "faq.q2":"Можно ли проходить несколько курсов подряд?",
+      "faq.a2":"Да, большинство выбирают путь «Корни → Поток → Сила или Тишина» и доходят до «Учителя» через 6–9 месяцев практики.",
+      "faq.q3":"Какой инвентарь понадобится?",
+      "faq.a3":"Коврик и желание дышать. Для «Силы» и «Тишины» пригодятся блоки и плед — список присылаем перед стартом курса.",
+      "faq.q4":"Что если формат не подойдёт?",
+      "faq.a4":"В течение 7 дней с начала курса можно вернуть деньги — без объяснений и лишних вопросов.",
+      "faq.q5":"Доступ к занятиям ограничен по времени?",
+      "faq.a5":"Видео остаются в личном кабинете навсегда — можно возвращаться к практике в любой момент.",
+      "cta.title":"Готовы сделать первый вдох?",
+      "cta.desc":"Оставьте почту — пришлём подробную программу всех пяти курсов и подскажем, с какого начать именно вам.",
+      "cta.placeholder":"Ваш email", "cta.submit":"Прислать программу",
+      "cta.confirm":"Программа отправлена — проверьте почту.",
+      "footer.brand":"Онлайн-студия осознанного движения. Пять курсов, один путь — от первой асаны до собственной группы учеников.",
+      "footer.coursesTitle":"Курсы", "footer.studioTitle":"Студия", "footer.contactTitle":"Связь",
+      "footer.bottom":"© 2026 VAYU. Онлайн-студия осознанного движения.",
+      "modal.title":"Покупка курса", "modal.namePlaceholder":"Ваше имя", "modal.emailPlaceholder":"Email",
+      "modal.confirm":"Перейти к оплате", "modal.cancel":"Отмена",
+      "modal.courseLabel":"Курс: ", "modal.fillFields":"Заполните данные",
+      "legal.terms":"Условия предоставления услуг",
+      "legal.privacy":"Политика конфиденциальности",
+      "legal.refund":"Политика возврата средств"
+    },
+    en: {
+      "nav.courses":"Courses", "nav.testimonials":"Reviews", "nav.faq":"FAQ", "nav.contacts":"Contact", "nav.cta":"Choose a course",
+      "hero.eyebrow":"Online studio of mindful movement",
+      "hero.title":"A path <em>one breath</em> long, that unfolds across five courses",
+      "hero.desc":"From your first asana on the mat to leading your own group of students — five programs built like a single breathing practice: inhale, move, hold, exhale.",
+      "hero.cta":"See the practice path",
+      "hero.note":"5 tracks · from €400",
+      "hero.inhale":"Inhale", "hero.exhale":"Exhale",
+      "path.eyebrow":"Practice path · 01–05",
+      "path.title":"Five stops between beginner and teacher",
+      "path.desc":"The courses follow the natural order of practice: each one builds on the last, but you can join the path at any level.",
+      "card.buy":"Buy →",
+      "course1.level":"Beginner", "course1.title":"Roots", "course1.tagline":"Your first breath on the mat", "course1.meta":"4 weeks · 12 sessions",
+      "course1.desc":"The basics of breathing and body alignment. Simple, low-risk asanas — for those who've never practiced or are returning after a long break.",
+      "course1.inc1":"No equipment needed", "course1.inc2":"Videos + written cues", "course1.inc3":"Chat with a mentor",
+      "course2.level":"Foundation", "course2.title":"Flow", "course2.tagline":"Breath leads the movement", "course2.meta":"6 weeks · 18 sessions",
+      "course2.desc":"Dynamic vinyasa-flow sequences. Learn to sync inhale and exhale with movement while building flexibility and coordination.",
+      "course2.inc1":"Practice playlists", "course2.inc2":"Frame-by-frame sequence breakdowns", "course2.inc3":"Lifetime access to recordings",
+      "course3.level":"Intermediate", "course3.title":"Strength", "course3.tagline":"Stability through effort", "course3.meta":"6 weeks · 18 sessions",
+      "course3.desc":"Power yoga and balance holds. Building core endurance and mindful muscle engagement.",
+      "course3.inc1":"Mat + block program", "course3.inc2":"Progress tracker", "course3.inc3":"Weekly technique review",
+      "course4.level":"Restorative", "course4.title":"Stillness", "course4.tagline":"A practice for the nervous system", "course4.meta":"4 weeks · 12 sessions",
+      "course4.desc":"Yoga nidra and yin yoga: long holds and breathwork for deep recovery and solid sleep.",
+      "course4.inc1":"Audio practices for sleep", "course4.inc2":"Minimal equipment", "course4.inc3":"Recordings available 24/7",
+      "course5.level":"Advanced + certification", "course5.title":"Teacher", "course5.tagline":"From practice to teaching", "course5.meta":"12 weeks · intensive",
+      "course5.desc":"Anatomy, class-building methodology, and group-leading practice. Final exam plus an internationally recognized teaching certificate.",
+      "course5.inc1":"200 RYT certificate", "course5.inc2":"Mentored internship", "course5.inc3":"Private community of teachers",
+      "stats.s1":"graduates have completed at least one course",
+      "stats.s2":"tracks — from first breath to certificate",
+      "stats.s3":"keep practicing a year later",
+      "stats.s4":"lead teacher-mentors on the team",
+      "testi.eyebrow":"Voices from the mat", "testi.title":"What people who've walked the path say",
+      "testi.q1":"I thought yoga was just stretching. The Stillness course taught me to fall asleep without pills.", "testi.a1":"MARINA, 34 — STILLNESS COURSE",
+      "testi.q2":"After Strength I finally held the handstand I'd been chasing for three years.", "testi.a2":"ALINA, 27 — STRENGTH COURSE",
+      "testi.q3":"I went all the way to Teacher and now run my own weekend group.", "testi.a3":"SVETLANA, 41 — TEACHER COURSE",
+      "faq.eyebrow":"FAQ", "faq.title":"Before you choose a course",
+      "faq.q1":"Do I need experience to start?",
+      "faq.a1":"No. Roots is designed for complete beginners — joints, breathing and basic poses are explained from scratch. Later courses increase in difficulty.",
+      "faq.q2":"Can I take several courses in a row?",
+      "faq.a2":"Yes — most people follow Roots → Flow → Strength or Stillness and reach Teacher after 6–9 months of practice.",
+      "faq.q3":"What equipment will I need?",
+      "faq.a3":"A mat and the will to breathe. Strength and Stillness benefit from blocks and a blanket — we send a list before each course starts.",
+      "faq.q4":"What if the format isn't right for me?",
+      "faq.a4":"You can get a refund within 7 days of the course start — no questions asked.",
+      "faq.q5":"Is access to the lessons time-limited?",
+      "faq.a5":"Videos stay in your account forever — you can return to the practice whenever you like.",
+      "cta.title":"Ready to take the first breath?",
+      "cta.desc":"Leave your email — we'll send the detailed program for all five courses and help you choose where to start.",
+      "cta.placeholder":"Your email", "cta.submit":"Send me the program",
+      "cta.confirm":"Program sent — check your inbox.",
+      "footer.brand":"An online studio of mindful movement. Five courses, one path — from your first asana to leading your own group of students.",
+      "footer.coursesTitle":"Courses", "footer.studioTitle":"Studio", "footer.contactTitle":"Contact",
+      "footer.bottom":"© 2026 VAYU. Online studio of mindful movement.",
+      "modal.title":"Buy a course", "modal.namePlaceholder":"Your name", "modal.emailPlaceholder":"Email",
+      "modal.confirm":"Go to payment", "modal.cancel":"Cancel",
+      "modal.courseLabel":"Course: ", "modal.fillFields":"Please fill in your details",
+      "legal.terms":"Terms & Conditions",
+      "legal.privacy":"Privacy Policy",
+      "legal.refund":"Refund Policy"
+    }
+  };
+
+  // CIS country codes inferred from timezone (no network request needed)
+  const CIS_TIMEZONES = [
+    "Europe/Moscow","Europe/Kaliningrad","Europe/Samara","Europe/Volgograd","Europe/Saratov",
+    "Europe/Astrakhan","Europe/Ulyanovsk","Europe/Kirov",
+    "Asia/Yekaterinburg","Asia/Omsk","Asia/Novosibirsk","Asia/Barnaul","Asia/Tomsk",
+    "Asia/Novokuznetsk","Asia/Krasnoyarsk","Asia/Irkutsk","Asia/Chita","Asia/Yakutsk",
+    "Asia/Vladivostok","Asia/Khandyga","Asia/Sakhalin","Asia/Magadan","Asia/Srednekolymsk",
+    "Asia/Kamchatka","Asia/Anadyr","Asia/Ust-Nera",
+    "Europe/Kyiv","Europe/Kiev","Europe/Simferopol",
+    "Europe/Minsk",
+    "Asia/Almaty","Asia/Qyzylorda","Asia/Aqtobe","Asia/Aqtau","Asia/Oral","Asia/Atyrau",
+    "Asia/Bishkek",
+    "Asia/Dushanbe",
+    "Asia/Ashgabat",
+    "Asia/Tashkent","Asia/Samarkand",
+    "Asia/Yerevan",
+    "Asia/Baku",
+    "Asia/Tbilisi",
+    "Europe/Chisinau"
+  ];
+  const CIS_LANGS = ["ru","be","uk","kk","ky","tg","tk","uz","hy","az"];
+
+  function detectIsCIS(){
+    try{
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (CIS_TIMEZONES.includes(tz)) return true;
+    }catch(e){}
+    const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "ru"];
+    return langs.some(l => CIS_LANGS.includes(l.toLowerCase().split('-')[0]));
+  }
+
+  function getLang(){
+    const saved = localStorage.getItem('vayuLang');
+    if (saved === 'ru' || saved === 'en') return saved;
+    return detectIsCIS() ? 'ru' : 'en';
+  }
+
+  let currentLang = getLang();
+
+  function applyLanguage(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    const dict = i18n[lang] || i18n.ru;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (dict[key] !== undefined) el.placeholder = dict[key];
+    });
+    document.title = lang === 'ru' ? 'VAYU — онлайн-студия йоги' : 'VAYU — online yoga studio';
+    const toggle = document.getElementById('langToggle');
+    if (toggle) toggle.textContent = lang === 'ru' ? 'EN' : 'RU';
+    localStorage.setItem('vayuLang', lang);
+  }
+
+  applyLanguage(currentLang);
+
+  const langToggle = document.getElementById('langToggle');
+  if (langToggle) {
+    langToggle.addEventListener('click', () => {
+      applyLanguage(currentLang === 'ru' ? 'en' : 'ru');
+    });
+  }
+
+  /* ===================== existing site behavior ===================== */
+  // nav background on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('is-scrolled', window.scrollY > 12);
+  });
+  // breathing label sync (4s inhale / 4s exhale matching the 8s CSS animation)
+  const breathLabel = document.getElementById('breathLabel');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (breathLabel && !prefersReduced) {
+    let inhale = true;
+    setInterval(() => {
+      inhale = !inhale;
+      breathLabel.textContent = i18n[currentLang][inhale ? 'hero.inhale' : 'hero.exhale'];
+    }, 4000);
+  }
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('is-open');
+      document.querySelectorAll('.faq-item').forEach(other => {
+        other.classList.remove('is-open');
+        other.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('is-open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+  // fake newsletter confirmation
+  const form = document.getElementById('ctaForm');
+  const confirm = document.getElementById('ctaConfirm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    confirm.textContent = i18n[currentLang]['cta.confirm'];
+    form.reset();
+  });
+</script>
+<div class="modal" id="buyModal">
+  <div class="modal-content">
+    <h3 data-i18n="modal.title">Покупка курса</h3>
+    <div id="courseName"></div>
+
+    <input id="buyerName" data-i18n-placeholder="modal.namePlaceholder" placeholder="Имя">
+    <input id="buyerEmail" data-i18n-placeholder="modal.emailPlaceholder" placeholder="Email">
+
+    <button id="confirmBuy" data-i18n="modal.confirm">Перейти к оплате</button>
+    <button onclick="closeModal()" data-i18n="modal.cancel">Отмена</button>
+  </div>
+</div>
+
+
+<script>
+const modal = document.getElementById('buyModal');
+const courseNameEl = document.getElementById('courseName');
+
+let selectedCourseKey = "";
+
+function openModal(courseKey){
+  selectedCourseKey = courseKey;
+  const title = i18n[currentLang][courseKey] || courseKey;
+  courseNameEl.textContent = i18n[currentLang]['modal.courseLabel'] + title;
+  modal.classList.add('active');
+}
+
+function closeModal(){
+  modal.classList.remove('active');
+}
+
+document.addEventListener('click', (e)=>{
+  const el = e.target;
+  const buyText = i18n[currentLang]['card.buy'];
+
+  if (el && el.classList && el.classList.contains('card-link')) {
+    e.preventDefault();
+    const card = el.closest('.course-card');
+    let courseKey = "course1.title";
+    if (card) {
+      const h = card.querySelector('h3[data-i18n]');
+      if (h) courseKey = h.getAttribute('data-i18n');
+    }
+    openModal(courseKey);
+    return;
+  }
+
+  if (e.target === modal) {
+    closeModal();
+  }
+});
+
+document.getElementById('confirmBuy').addEventListener('click', ()=>{
+  const name = document.getElementById('buyerName').value;
+  const email = document.getElementById('buyerEmail').value;
+
+  if (!name || !email) {
+    alert(i18n[currentLang]['modal.fillFields']);
+    return;
+  }
+
+  localStorage.setItem('order', JSON.stringify({
+    course: i18n[currentLang][selectedCourseKey] || selectedCourseKey,
+    name, email
+  }));
+
+  window.location.href = "/payment.html";
+});
+</script>
+
+<script>
+/* ===================== LEGAL MODALS ===================== */
+const legalContent = {
+  ru: {
+    terms: {
+      title: "Условия и положения предоставления услуг",
+      body: `
+        <span class="legal-effective">Дата вступления в силу: с момента успешного завершения оплаты</span>
+        <h4>1. Общие положения</h4>
+        <p>Настоящие Условия регулируют использование сайта vayu-yoga-final.vercel.app и приобретение онлайн-курсов йоги. Используя сайт и оплачивая курсы, пользователь подтверждает согласие с настоящими Условиями.</p>
+        <h4>2. Описание услуг</h4>
+        <p>Мы предоставляем цифровые образовательные продукты, включая:</p>
+        <ul><li>онлайн-курсы йоги;</li><li>видеоуроки;</li><li>обучающие материалы.</li></ul>
+        <p>Все услуги предоставляются в цифровом формате через интернет.</p>
+        <h4>3. Доступ к материалам</h4>
+        <p>После успешного завершения оплаты пользователь получает доступ к приобретённым материалам. Срок доступа указывается на странице курса либо предоставляется бессрочно, если не указано иное.</p>
+        <h4>4. Запрещённое использование</h4>
+        <p>Пользователь обязуется не:</p>
+        <ul><li>передавать доступ третьим лицам;</li><li>копировать, распространять или перепродавать материалы;</li><li>использовать материалы в коммерческих целях без письменного разрешения.</li></ul>
+        <h4>5. Оплата</h4>
+        <p>Все платежи обрабатываются через сторонние платёжные системы. Мы не храним данные банковских карт пользователей.</p>
+        <h4>6. Ограничение ответственности</h4>
+        <p>Мы не гарантируем конкретных физических, медицинских или иных результатов от практики йоги. Пользователь самостоятельно оценивает своё физическое состояние перед началом занятий.</p>
+        <h4>7. Изменения условий</h4>
+        <p>Мы оставляем за собой право изменять настоящие Условия в любое время. Обновлённая версия публикуется на сайте.</p>
+      `
+    },
+    privacy: {
+      title: "Политика конфиденциальности",
+      body: `
+        <span class="legal-effective">Дата вступления в силу: с момента оплаты или первого использования сайта</span>
+        <h4>1. Какие данные мы собираем</h4>
+        <p>Мы можем собирать следующие данные:</p>
+        <ul><li>имя и email;</li><li>данные об оплате (обрабатываются платёжным провайдером);</li><li>технические данные (IP-адрес, cookies, устройство).</li></ul>
+        <h4>2. Как мы используем данные</h4>
+        <p>Собранные данные используются для:</p>
+        <ul><li>предоставления доступа к курсам;</li><li>поддержки пользователей;</li><li>улучшения сервиса;</li><li>отправки уведомлений (при согласии пользователя).</li></ul>
+        <h4>3. Хранение данных</h4>
+        <p>Данные хранятся только столько, сколько необходимо для предоставления услуг и выполнения юридических обязательств.</p>
+        <h4>4. Передача третьим лицам</h4>
+        <p>Мы можем использовать сторонние сервисы: платёжные системы, аналитические сервисы, email-рассылки. Передача данных осуществляется только в минимально необходимом объёме.</p>
+        <h4>5. Cookies</h4>
+        <p>Сайт использует cookies для корректной работы, аналитики и улучшения пользовательского опыта. Пользователь может отключить cookies в настройках браузера.</p>
+        <h4>6. Права пользователя (GDPR)</h4>
+        <p>Пользователь имеет право:</p>
+        <ul><li>запросить доступ к своим данным;</li><li>исправить или удалить данные;</li><li>ограничить обработку;</li><li>отозвать согласие на обработку данных.</li></ul>
+        <h4>7. Контакты</h4>
+        <p>По вопросам обработки данных: <a href="mailto:reswer78@inbox.lv" style="color:var(--coral)">reswer78@inbox.lv</a></p>
+      `
+    },
+    refund: {
+      title: "Политика возврата средств",
+      body: `
+        <span class="legal-effective">Дата вступления в силу: с момента успешного завершения оплаты</span>
+        <h4>1. Цифровые продукты</h4>
+        <p>Так как мы продаём цифровые курсы с мгновенным доступом после оплаты, возврат средств ограничен.</p>
+        <h4>2. Возврат возможен только в следующих случаях</h4>
+        <ul><li>доступ к курсу не был предоставлен по технической ошибке с нашей стороны;</li><li>произошла ошибка списания (например, двойной платёж);</li><li>пользователь не получил оплаченный доступ по нашей вине.</li></ul>
+        <h4>3. Возврат не предоставляется, если</h4>
+        <ul><li>пользователь получил доступ к материалам;</li><li>курс был частично или полностью использован;</li><li>пользователь изменил решение после получения доступа.</li></ul>
+        <h4>4. Запрос на возврат</h4>
+        <p>Для запроса возврата свяжитесь с нами: <a href="mailto:reswer78@inbox.lv" style="color:var(--coral)">reswer78@inbox.lv</a></p>
+        <p>Срок рассмотрения запроса: 7–14 рабочих дней.</p>
+        <h4>5. Исключения</h4>
+        <p>В отдельных случаях мы можем рассмотреть возврат по собственному усмотрению.</p>
+      `
+    }
+  },
+  en: {
+    terms: {
+      title: "Terms & Conditions",
+      body: `
+        <span class="legal-effective">Effective date: upon successful completion of payment</span>
+        <h4>1. General Provisions</h4>
+        <p>These Terms govern the use of vayu-yoga-final.vercel.app and the purchase of online yoga courses ("Services"). By using the site and purchasing courses, the user confirms their agreement to these Terms.</p>
+        <h4>2. Description of Services</h4>
+        <p>We provide digital educational products, including:</p>
+        <ul><li>online yoga courses;</li><li>video lessons;</li><li>educational materials.</li></ul>
+        <p>All services are delivered in digital format via the internet.</p>
+        <h4>3. Access to Materials</h4>
+        <p>Upon successful payment, the user gains access to the purchased materials. Access duration is stated on the course page or is granted indefinitely unless otherwise specified.</p>
+        <h4>4. Prohibited Use</h4>
+        <p>The user agrees not to:</p>
+        <ul><li>share access with third parties;</li><li>copy, distribute, or resell materials;</li><li>use materials for commercial purposes without written permission.</li></ul>
+        <h4>5. Payment</h4>
+        <p>All payments are processed through third-party payment systems. We do not store users' bank card data.</p>
+        <h4>6. Limitation of Liability</h4>
+        <p>We do not guarantee specific physical, medical, or other results from yoga practice. The user independently assesses their physical condition before starting classes.</p>
+        <h4>7. Changes to Terms</h4>
+        <p>We reserve the right to modify these Terms at any time. The updated version is published on the site.</p>
+      `
+    },
+    privacy: {
+      title: "Privacy Policy",
+      body: `
+        <span class="legal-effective">Effective date: upon payment or first use of the site</span>
+        <h4>1. What Data We Collect</h4>
+        <p>We may collect the following data:</p>
+        <ul><li>name and email;</li><li>payment data (processed by the payment provider);</li><li>technical data (IP address, cookies, device).</li></ul>
+        <h4>2. How We Use Data</h4>
+        <p>Collected data is used for:</p>
+        <ul><li>granting access to courses;</li><li>user support;</li><li>service improvement;</li><li>sending notifications (with user consent).</li></ul>
+        <h4>3. Data Storage</h4>
+        <p>Data is stored only as long as necessary to provide services and fulfil legal obligations.</p>
+        <h4>4. Third-Party Sharing</h4>
+        <p>We may use third-party services: payment systems, analytics services, email platforms. Data is shared only to the minimum extent necessary.</p>
+        <h4>5. Cookies</h4>
+        <p>The site uses cookies for proper operation, analytics, and user experience improvement. The user may disable cookies in their browser settings.</p>
+        <h4>6. User Rights (GDPR)</h4>
+        <p>The user has the right to:</p>
+        <ul><li>request access to their data;</li><li>correct or delete data;</li><li>restrict processing;</li><li>withdraw consent to data processing.</li></ul>
+        <h4>7. Contact</h4>
+        <p>For data processing enquiries: <a href="mailto:reswer78@inbox.lv" style="color:var(--coral)">reswer78@inbox.lv</a></p>
+      `
+    },
+    refund: {
+      title: "Refund Policy",
+      body: `
+        <span class="legal-effective">Effective date: upon successful completion of payment</span>
+        <h4>1. Digital Products</h4>
+        <p>As we sell digital courses with instant access upon payment, refunds are limited.</p>
+        <h4>2. Refunds Are Available Only in the Following Cases</h4>
+        <ul><li>access to the course was not provided due to a technical error on our part;</li><li>a billing error occurred (e.g. double charge);</li><li>the user did not receive the paid access through our fault.</li></ul>
+        <h4>3. No Refund Is Provided If</h4>
+        <ul><li>the user has gained access to the materials;</li><li>the course has been partially or fully used;</li><li>the user changed their mind after receiving access.</li></ul>
+        <h4>4. Refund Request</h4>
+        <p>To request a refund, contact us: <a href="mailto:reswer78@inbox.lv" style="color:var(--coral)">reswer78@inbox.lv</a></p>
+        <p>Request processing time: 7–14 business days.</p>
+        <h4>5. Exceptions</h4>
+        <p>In individual cases, we may consider a refund at our sole discretion.</p>
+      `
+    }
+  }
+};
+
+function openLegalModal(type) {
+  const lang = (typeof currentLang !== 'undefined' && legalContent[currentLang]) ? currentLang : 'ru';
+  const content = legalContent[lang][type];
+  if (!content) return;
+  document.getElementById('legalModalTitle').textContent = content.title;
+  document.getElementById('legalModalBody').innerHTML = content.body;
+  document.getElementById('legalModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLegalModal(e) {
+  if (e && e.target !== document.getElementById('legalModal') && !e.target.classList.contains('legal-modal-close')) return;
+  if (e && e.type === 'click' && e.target.closest && e.target.closest('.legal-modal-box') && e.target !== document.getElementById('legalModal')) return;
+  document.getElementById('legalModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.getElementById('legalModal').addEventListener('click', function(e){
+  if (e.target === this) {
+    this.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') {
+    const lm = document.getElementById('legalModal');
+    if (lm && lm.classList.contains('active')) {
+      lm.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+});
+</script>
+
+</body>
+</html>
